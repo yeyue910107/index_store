@@ -1,0 +1,141 @@
+/**
+ * 
+ */
+package org.act.index.manager;
+
+
+import java.util.Calendar;
+import java.util.HashSet;
+import org.act.index.common.CoreInfo;
+
+/**
+ * @author yeyue
+ *
+ */
+public class CoreCollect {
+	private HashSet<Integer> userSet;
+	private HashSet<Integer> serverSet;
+	private int masterServer;
+	private CoreInfo coreInfo;
+	private Calendar lastJoinTime;
+	private Calendar lastLeaveTime;
+	private boolean isCreating;
+	
+	/**
+	 * 
+	 */
+	public CoreCollect() {
+		// TODO Auto-generated constructor stub
+		coreInfo = new CoreInfo();
+		masterServer = -1;
+	}
+
+	public CoreCollect(int coreId) {
+		// TODO Auto-generated constructor stub
+		coreInfo = new CoreInfo(coreId);
+		masterServer = -1;
+	}
+	
+	//TODO getters and setters
+
+	/**
+	 * @return the serverSet
+	 */
+	public HashSet<Integer> getServerSet() {
+		return serverSet;
+	}
+
+	/**
+	 * @param serverSet the serverSet to set
+	 */
+	public void setServerSet(HashSet<Integer> serverSet) {
+		this.serverSet = serverSet;
+	}
+	
+	/**
+	 * @return the coreInfo
+	 */
+	public CoreInfo getCoreInfo() {
+		return coreInfo;
+	}
+
+	/**
+	 * @param coreInfo the coreInfo to set
+	 */
+	public void setCoreInfo(CoreInfo coreInfo) {
+		this.coreInfo = coreInfo;
+	}
+	
+	/**
+	 * @return the masterServer
+	 */
+	public int getMasterServer() {
+		return masterServer;
+	}
+
+	/**
+	 * @param masterServer the masterServer to set
+	 */
+	public void setMasterServer(int masterServer) {
+		this.masterServer = masterServer;
+	}
+	
+	public boolean isCreating() {
+		return isCreating;
+	}
+
+	public boolean join(int serverId, boolean isMaster) {
+		if (!serverSet.contains(serverId)) {
+			synchronized (this) {
+				serverSet.add(serverId);
+				if (isMaster) {
+					masterServer = serverId;
+				}
+				// TODO lastJoinTime
+				lastJoinTime = Calendar.getInstance();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean leave(int serverId, boolean isMaster) {
+		if (serverSet.contains(serverId)) {
+			synchronized (this) {
+				serverSet.remove(serverId);
+				if (isMaster) {
+					
+				}
+				// TODO lastLeaveTime
+				lastLeaveTime = Calendar.getInstance();
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean addUser(int userId) {
+		if (!userSet.contains(userId)) {
+			synchronized (userSet) {
+				userSet.add(userId);
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean removeUser(int userId) {
+		if (userSet.contains(userId)) {
+			synchronized (userSet) {
+				userSet.remove(userId);
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isFull() {
+		// TODO
+		return false;
+	}
+}
